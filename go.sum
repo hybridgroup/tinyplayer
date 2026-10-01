@@ -1,0 +1,4 @@
+github.com/soypat/fat v0.2.1 h1:wYsxsqJBWvTXUvrB8QgcgPFaDnom/2S9XTktc7NQwbc=
+github.com/soypat/fat v0.2.1/go.mod h1:6cCZCfoOpl4IbaA4ohTrTYp1ejoUGEoiToDXpXDfAk0=
+github.com/tinygo-org/pio v0.3.1-0.20261001151825-8df61caa5054 h1:OGvBOPd2/5PUWcfB3l/NdItiGwTiZZHtFl/RpZFHCwU=
+github.com/tinygo-org/pio v0.3.1-0.20261001151825-8df61caa5054/go.mod h1:wf6c6lKZp+pQOzKKcpzchmRuhiMc27ABRuo7KVnaMFU=
