@@ -5,6 +5,7 @@ package flashdisk
 import (
 	"errors"
 	"io"
+	"sync"
 	"sync/atomic"
 )
 
@@ -29,7 +30,7 @@ var (
 // Disk caches one erase block and erases flash only when a write needs it.
 // Call Sync to write the cached block out.
 type Disk struct {
-	mu         lock
+	mu         sync.Mutex
 	dev        BlockDevice
 	offset     int64
 	size       int64
@@ -108,12 +109,9 @@ func (d *Disk) ReadAt(p []byte, off int64) (int, error) {
 	if off < 0 || off+int64(len(p)) > d.size {
 		return 0, ErrBounds
 	}
-	// No defer since MSC calls this from an interrupt, see TinyGo
-	// src/machine/usb/msc/scsi_readwrite.go readBlock.
-	state := d.mu.lock()
-	n, err := d.readAt(p, off)
-	d.mu.unlock(state)
-	return n, err
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	return d.readAt(p, off)
 }
 
 func (d *Disk) readAt(p []byte, off int64) (int, error) {
@@ -137,10 +135,9 @@ func (d *Disk) WriteAt(p []byte, off int64) (int, error) {
 	if off < 0 || off+int64(len(p)) > d.size {
 		return 0, ErrBounds
 	}
-	state := d.mu.lock()
-	n, err := d.writeAt(p, off)
-	d.mu.unlock(state)
-	return n, err
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	return d.writeAt(p, off)
 }
 
 func (d *Disk) writeAt(p []byte, off int64) (int, error) {
@@ -163,10 +160,9 @@ func (d *Disk) writeAt(p []byte, off int64) (int, error) {
 
 // Sync writes the cached erase block to flash.
 func (d *Disk) Sync() error {
-	state := d.mu.lock()
-	err := d.flush()
-	d.mu.unlock(state)
-	return err
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	return d.flush()
 }
 
 func (d *Disk) load(blk int64) error {
