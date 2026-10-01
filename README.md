@@ -110,7 +110,6 @@ ffmpeg -i in.mp3 -ac 2 -ar 44100 -c:a pcm_s16le out.wav
 
 ## Known issues
 
-- soypat/fat uses `log/slog`, which adds about 250 KB of flash even with no logger set.
 - On ESP32-C3 the ROM flash routines refuse writes past 2 MiB, so the example volume ends there.
 - ESP32-S3 has no `machine.Flash` yet.
 - RP2040 and RP2350 need the DMA and sample rate fixes to `piolib.I2S` from [tinygo-org/pio#64](https://github.com/tinygo-org/pio/pull/64). `go.mod` uses that commit until it is released.
