@@ -150,7 +150,7 @@ Controls with an [Adafruit Mini I2C Gamepad QT](https://www.adafruit.com/product
 
 With no gamepad the expansion board button does everything. Short press moves down, hold for half a second to open or play/pause, and hold for 1.5 seconds to go back.
 
-16 bit 44.1 kHz stereo works but uses a lot of the SD bandwidth. 22.05 kHz is a safe choice if you hear gaps.
+16 bit stereo at 22.05 kHz and 44.1 kHz plays without gaps on both boards. tinypod reads each song ahead into a 32 KB buffer, so SD reads and screen updates do not interrupt the audio.
 
 ## Making WAV files
 
