@@ -105,6 +105,9 @@ func TestReuse(t *testing.T) {
 		if err := d.Reset(bytes.NewReader(in)); err != nil {
 			t.Fatal(err)
 		}
+		if d.Frames() != 24408/4 {
+			t.Fatalf("pass %d: Frames %d", i, d.Frames())
+		}
 		if n := len(readAll(t, &d, 256)); n != 24408/2 {
 			t.Fatalf("pass %d: %d samples", i, n)
 		}

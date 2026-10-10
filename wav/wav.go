@@ -42,6 +42,7 @@ type Decoder struct {
 	r         io.Reader
 	format    Format
 	remaining uint32
+	frames    int
 	buf       [bufSize]byte
 
 	block    []byte
@@ -62,11 +63,17 @@ func (d *Decoder) Format() Format {
 	return d.format
 }
 
+// Frames returns the number of sample frames in the data chunk.
+func (d *Decoder) Frames() int {
+	return d.frames
+}
+
 // Reset reads a new WAV header from r so the decoder can be reused.
 func (d *Decoder) Reset(r io.Reader) error {
 	d.r = r
 	d.format = Format{}
 	d.remaining = 0
+	d.frames = 0
 	d.pos, d.end = 0, 0
 
 	hdr := d.buf[:12]
@@ -170,6 +177,7 @@ func (d *Decoder) setup() error {
 	default:
 		return ErrUnsupported
 	}
+	d.frames = int(d.remaining) / f.BlockAlign * f.SamplesPerBlock
 	return nil
 }
 

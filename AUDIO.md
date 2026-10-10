@@ -40,6 +40,16 @@ Run the examples with no extra tags:
 tinygo flash -target=xiao-rp2350 ./examples/embed
 ```
 
+### tinypod on the Seeed XIAO expansion board
+
+The expansion board uses D1 for its button, D2 and D8 to D10 for the microSD card, D3 for the buzzer and D4/D5 for the OLED. So tinypod connects the DAC to the Grove A0 and Grove UART pins.
+
+| DAC pin | XIAO pin | xiao-esp32c3 | xiao-rp2350 |
+|---|---|---|---|
+| WSEL | D7 | GPIO20 | GPIO1 |
+| DIN | D0 | GPIO2 | GPIO26 |
+| BCK | D6 | GPIO21 | GPIO0 |
+
 ## WT-1205 buzzer with a 2N2222 transistor
 
 The WT-1205 is a magnetic buzzer with a coil of about 42 ohm. It needs more current than a pin can give, so drive it from an NPN transistor. The diode catches the voltage spike from the coil when the transistor turns off. This uses the PWM output, so it only works on RP2040 and RP2350.
