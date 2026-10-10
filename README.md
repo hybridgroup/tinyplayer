@@ -1,6 +1,6 @@
 # tinyplayer
 
-Play WAV audio on TinyGo devices using an I2S DAC such as the PCM5102 or MAX98357.
+Play WAV audio on TinyGo devices using an I2S DAC such as the PCM5102 or MAX98357, or a speaker or piezo buzzer on a PWM pin.
 
 - Sound effects, speech and music
 - 8 and 16 bit PCM, and IMA ADPCM, mono or stereo, at any sample rate the I2S hardware supports
@@ -9,13 +9,13 @@ Play WAV audio on TinyGo devices using an I2S DAC such as the PCM5102 or MAX9835
 
 ## Supported hardware
 
-| Chip | I2S | Flash files | USB drive |
-|---|---|---|---|
-| ESP32-C3 | machine.I2S0 | yes | no |
-| ESP32-C6, ESP32-S3 | machine.I2S0 | no | no |
-| nRF52840 | machine.I2S0 | yes | yes |
-| nRF52832, nRF52833 | machine.I2S0 | yes | no |
-| RP2040, RP2350 | [pio](https://github.com/tinygo-org/pio) piolib.I2S | yes | yes |
+| Chip | I2S | PWM speaker | Flash files | USB drive |
+|---|---|---|---|---|
+| ESP32-C3 | machine.I2S0 | no | yes | no |
+| ESP32-C6, ESP32-S3 | machine.I2S0 | no | no | no |
+| nRF52840 | machine.I2S0 | no | yes | yes |
+| nRF52832, nRF52833 | machine.I2S0 | no | yes | no |
+| RP2040, RP2350 | [pio](https://github.com/tinygo-org/pio) piolib.I2S | pwm.PWM | yes | yes |
 
 The ESP32 and nRF52 I2S drivers are in the TinyGo dev branch.
 
@@ -45,6 +45,25 @@ To embed a sound use a string so it stays in flash:
 var beep string
 ```
 
+### Speaker or buzzer
+
+On RP2040 and RP2350 the `pwm` package plays audio as a PWM duty cycle. It is mono and about 11 bits, with the PWM carrier at 40 kHz or above. DMA feeds the PWM so the CPU does no work per sample.
+
+```go
+out, _ := pwm.New(machine.GPIO2, machine.GPIO3, 11)
+player := tinyplayer.New(out)
+```
+
+The second pin gets the inverted signal. It must be the other channel of the same PWM slice, so an even pin and the pin after it. Pass `machine.NoPin` to use one pin. The last argument is the DMA channel.
+
+Wiring:
+
+- Passive piezo buzzer: connect it between the two pins. Driving both ends gives twice the swing of one pin.
+- Small speaker: drive a logic level N-channel MOSFET or NPN transistor from one pin, with the speaker between the drain and 3.3V or 5V and a diode across the speaker. Never connect a speaker straight to a pin.
+- Amplifier such as the PAM8302: put a 1k resistor and 10nF capacitor low pass filter between one pin and the amp input.
+
+Active buzzers, including the Grove Buzzer, have their own oscillator and only switch on and off. They can play simple tones but not WAV audio. Use a passive piezo, a speaker, or an amplifier such as the Grove Speaker.
+
 ### Files on flash
 
 `flashdisk` makes a region of NOR flash usable as a disk with 512 byte sectors. It erases flash only when it has to. `storage` mounts a FAT volume on it using [github.com/soypat/fat](https://github.com/soypat/fat), and formats it the first time.
@@ -71,6 +90,12 @@ Wiring for the examples:
 | ESP32 | GPIO3 | GPIO4 | GPIO5 |
 | nRF52 | P0.03 | P0.04 | P0.28 |
 | RP2040, RP2350 | GPIO3 | GPIO4 | GPIO2 |
+
+For a speaker or buzzer on RP2040 or RP2350 add `-tags speaker` and connect it to GPIO2 and GPIO3.
+
+```
+tinygo flash -tags speaker -target=xiao-rp2350 ./examples/embed
+```
 
 - `examples/embed` plays sounds built into the program.
 

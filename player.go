@@ -1,4 +1,4 @@
-// Package tinyplayer plays WAV audio on an I2S output.
+// Package tinyplayer plays WAV audio on an I2S DAC or a PWM speaker output.
 package tinyplayer
 
 import (
@@ -8,7 +8,7 @@ import (
 	"github.com/hybridgroup/tinyplayer/wav"
 )
 
-// Output is an I2S bus such as *machine.I2S or *piolib.I2S.
+// Output is an I2S bus such as *machine.I2S or *piolib.I2S, or a *pwm.PWM.
 type Output interface {
 	SetSampleFrequency(freq uint32) error
 	WriteStereo(b []uint32) (int, error)
