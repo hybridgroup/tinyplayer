@@ -19,7 +19,7 @@ Play WAV audio on TinyGo devices using an I2S DAC such as the PCM5102 or MAX9835
 | nRF52832, nRF52833 | machine.I2S0 | no | yes | no |
 | RP2040, RP2350 | [pio](https://github.com/tinygo-org/pio) piolib.I2S | pwm.PWM | yes | yes |
 
-The ESP32 and nRF52 I2S drivers are in the TinyGo dev branch.
+See [AUDIO.md](AUDIO.md) for how to connect an I2S DAC, a buzzer or a speaker.
 
 ## Usage
 
@@ -58,11 +58,11 @@ player := tinyplayer.New(out)
 
 The second pin gets the inverted signal. It must be the other channel of the same PWM slice, so an even pin and the pin after it. Pass `machine.NoPin` to use one pin. The last argument is the DMA channel.
 
-Wiring:
+Wiring, with more detail and photos in [AUDIO.md](AUDIO.md):
 
 - Passive piezo buzzer: connect it between the two pins. Driving both ends gives twice the swing of one pin.
 - Small speaker: drive a logic level N-channel MOSFET or NPN transistor from one pin, with the speaker between the drain and 3.3V or 5V and a diode across the speaker. Never connect a speaker straight to a pin.
-- Amplifier such as the PAM8302: put a 1k resistor and 10nF capacitor low pass filter between one pin and the amp input.
+- Amplifier such as the PAM8302 or LM386: put a 1k resistor and 10nF capacitor low pass filter between one pin and the amp input.
 
 Active buzzers, including the Grove Buzzer, have their own oscillator and only switch on and off. They can play simple tones but not WAV audio. Use a passive piezo, a speaker, or an amplifier such as the Grove Speaker.
 
@@ -85,7 +85,7 @@ The same `disk` can be passed to `msc.Port` to show it as a USB drive.
 
 ## Examples
 
-Wiring for the examples:
+Wiring for the examples. See [AUDIO.md](AUDIO.md) for details on each kind of audio hardware.
 
 | Board | SCK/BCK | WS/LCK | SDO/DIN |
 |---|---|---|---|
