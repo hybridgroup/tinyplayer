@@ -1,5 +1,7 @@
 #!/bin/sh
 # Generates the example sounds. Needs ffmpeg and espeak-ng.
+# speech_ja.wav also needs VOICEVOX set to a voicevox_core directory and
+# github.com/hybridgroup/voicevox checked out in VOICEVOX_GO.
 set -e
 cd "$(dirname "$0")"
 Q="-loglevel error -y"
@@ -13,6 +15,13 @@ ffmpeg $Q -f lavfi -i "aevalsrc=0.8*sin(2*PI*2000*t)*exp(-t*400):s=8000:d=0.02" 
 espeak-ng -w speech_raw.wav "Hello from Tiny Go. This is tiny player."
 ffmpeg $Q -i speech_raw.wav -ac 1 -ar 16000 -c:a adpcm_ima_wav speech.wav
 rm speech_raw.wav
+
+if [ -n "$VOICEVOX" ]; then
+	(cd "$VOICEVOX_GO" && go run ./examples/hello -data "$VOICEVOX" \
+		-text "「タイニーゴー」よりご挨拶申し上げます。いかがお過ごしですか？" -o "$OLDPWD/speech_ja_raw.wav")
+	ffmpeg $Q -i speech_ja_raw.wav -ac 1 -ar 16000 -c:a adpcm_ima_wav speech_ja.wav
+	rm speech_ja_raw.wav
+fi
 
 ffmpeg $Q -f lavfi -i "aevalsrc=\
 0.4*sin(2*PI*(262*between(mod(t\,2)\,0\,0.5)+330*between(mod(t\,2)\,0.5\,1)+392*between(mod(t\,2)\,1\,1.5)+523*between(mod(t\,2)\,1.5\,2))*t)*(1-mod(t\,0.5)*1.6)|\

@@ -10,6 +10,8 @@ var (
 	Click string
 	//go:embed speech.wav
 	Speech string
+	//go:embed speech_ja.wav
+	SpeechJA string
 	//go:embed music.wav
 	Music string
 )
@@ -22,5 +24,6 @@ var All = []struct {
 	{"beep.wav", Beep},
 	{"click.wav", Click},
 	{"speech.wav", Speech},
+	{"speech_ja.wav", SpeechJA},
 	{"music.wav", Music},
 }
