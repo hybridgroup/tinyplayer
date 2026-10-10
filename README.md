@@ -38,7 +38,7 @@ player := tinyplayer.New(out)
 player.Play(strings.NewReader(sound))
 ```
 
-`Play` takes any `io.Reader` with a WAV file in it. It sets the sample rate from the file and returns when all the audio is queued. Call `Stop` from another goroutine to end playback early. `SetVolume` takes 0 to 256.
+`Play` takes any `io.Reader` with a WAV file in it. It sets the sample rate from the file and returns when all the audio is queued. Call `Stop` from another goroutine to end playback early, or `Pause` to pause and resume it. `Progress` returns the elapsed and total time. `SetVolume` takes 0 to 256.
 
 To embed a sound use a string so it stays in flash:
 
@@ -117,7 +117,19 @@ tinygo flash -tags speaker -target=xiao-rp2350 ./examples/embed
   tinygo flash -tags fat_noexfat -target=pico ./examples/msc
   ```
 
+- `examples/tinypod` is an iPod classic style music player for a XIAO board on the Seeed XIAO expansion board. It plays WAV files from the microSD card and shows menus on the OLED. See [examples/tinypod/README.md](examples/tinypod/README.md).
+
+  ```
+  tinygo flash -tags fat_noexfat -target=xiao-rp2350 ./examples/tinypod
+  ```
+
 The `fat_noexfat` tag leaves out exFAT support, which these small volumes do not need.
+
+## tinypod
+
+`examples/tinypod` is an iPod classic style music player for the xiao-esp32c3 and xiao-rp2350 on the [Seeed XIAO expansion board](https://wiki.seeedstudio.com/Seeeduino-XIAO-Expansion-Board/). It plays WAV files from the microSD card, shows menus on the OLED, and uses an Adafruit Mini I2C Gamepad QT or the board button for input. Connect an I2S DAC to D0, D6 and D7 as shown in [AUDIO.md](AUDIO.md#tinypod-on-the-seeed-xiao-expansion-board).
+
+See [examples/tinypod/README.md](examples/tinypod/README.md) for the wiring, the SD card layout, the controls and how it works.
 
 ## Making WAV files
 
@@ -139,4 +151,6 @@ ffmpeg -i in.mp3 -ac 2 -ar 44100 -c:a pcm_s16le out.wav
 
 - On ESP32-C3 the ROM flash routines refuse writes past 2 MiB, so the example volume ends there.
 - ESP32-S3 has no `machine.Flash` yet.
+- tinypod needs the `sd` read fix from [tinygo-org/drivers#905](https://github.com/tinygo-org/drivers/pull/905). The `sd` package reads several blocks at once correctly only on SDHC cards, so use a card of 4 GB or more.
+- On RP2040 and RP2350, piolib I2S and SPI0 use the same DMA channel unless [tinygo-org/pio#65](https://github.com/tinygo-org/pio/pull/65) is applied. `go.mod` uses the branches of these PRs until they are merged.
 - RP2040 and RP2350 need the DMA and sample rate fixes to `piolib.I2S` from [tinygo-org/pio#64](https://github.com/tinygo-org/pio/pull/64). `go.mod` uses the pio main branch until the next release.
