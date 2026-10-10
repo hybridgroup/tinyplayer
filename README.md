@@ -1,5 +1,7 @@
 # tinyplayer
 
+<img src="images/tinyplayer-gopher.png" alt="tinyplayer gopher" width="300">
+
 Play WAV audio on TinyGo devices using an I2S DAC such as the PCM5102 or MAX98357, or a speaker or piezo buzzer on a PWM pin.
 
 - Sound effects, speech and music
