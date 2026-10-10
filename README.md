@@ -117,7 +117,7 @@ tinygo flash -tags speaker -target=xiao-rp2350 ./examples/embed
   tinygo flash -tags fat_noexfat -target=pico ./examples/msc
   ```
 
-- `examples/tinypod` is an iPod classic style music player for a XIAO board on the Seeed XIAO expansion board. It plays WAV files from the microSD card and shows menus on the OLED. See [tinypod](#tinypod) below.
+- `examples/tinypod` is an iPod classic style music player for a XIAO board on the Seeed XIAO expansion board. It plays WAV files from the microSD card and shows menus on the OLED. See [examples/tinypod/README.md](examples/tinypod/README.md).
 
   ```
   tinygo flash -tags fat_noexfat -target=xiao-rp2350 ./examples/tinypod
@@ -127,30 +127,9 @@ The `fat_noexfat` tag leaves out exFAT support, which these small volumes do not
 
 ## tinypod
 
-`examples/tinypod` runs on the xiao-esp32c3 and xiao-rp2350 plugged into the [Seeed XIAO expansion board](https://wiki.seeedstudio.com/Seeeduino-XIAO-Expansion-Board/). The board's microSD slot holds the music and its OLED shows the menus. Connect an I2S DAC to D0, D6 and D7 as shown in [AUDIO.md](AUDIO.md#tinypod).
+`examples/tinypod` is an iPod classic style music player for the xiao-esp32c3 and xiao-rp2350 on the [Seeed XIAO expansion board](https://wiki.seeedstudio.com/Seeeduino-XIAO-Expansion-Board/). It plays WAV files from the microSD card, shows menus on the OLED, and uses an Adafruit Mini I2C Gamepad QT or the board button for input. Connect an I2S DAC to D0, D6 and D7 as shown in [AUDIO.md](AUDIO.md#tinypod-on-the-seeed-xiao-expansion-board).
 
-Put WAV files on a FAT32 SDHC card. Each folder in `/Music` shows up as an album, and its subfolders are added to it. If there is no `/Music` folder the root of the card is used.
-
-```
-/Music/Album One/01 Song.wav
-/Music/Album Two/Disc 1/01 Song.wav
-```
-
-Controls with an [Adafruit Mini I2C Gamepad QT](https://www.adafruit.com/product/5743) plugged into the Grove I2C port:
-
-| Control | Menus | Now Playing |
-|---|---|---|
-| Joystick up/down | move | volume |
-| Joystick left/right | back/open | previous/next song |
-| A | open | play/pause |
-| B or Select | back | back to menus |
-| Start | play/pause | play/pause |
-| X/Y | volume | volume |
-| Expansion board button | back | back to menus |
-
-With no gamepad the expansion board button does everything. Short press moves down, hold for half a second to open or play/pause, and hold for 1.5 seconds to go back.
-
-16 bit stereo at 22.05 kHz and 44.1 kHz plays without gaps on both boards. On the ESP32-C3 tinypod reads each song ahead into a 32 KB buffer, so SD reads and screen updates do not interrupt the audio.
+See [examples/tinypod/README.md](examples/tinypod/README.md) for the wiring, the SD card layout, the controls and how it works.
 
 ## Making WAV files
 
